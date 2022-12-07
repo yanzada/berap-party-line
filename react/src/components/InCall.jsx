@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { INCALL, useCallState } from "../CallProvider";
 import { SPEAKER, LISTENER, MOD } from "../App";
@@ -23,7 +23,9 @@ const InCall = () => {
     lowerHand,
     endCall,
   } = useCallState();
-  console.log(participants);
+
+  const audioRef = useRef(null);
+ 
 
   const local = useMemo(
     (p) => participants?.filter((p) => p?.local)[0],
@@ -42,6 +44,16 @@ const InCall = () => {
       participants?.filter((p) => getAccountType(p?.user_name) === SPEAKER),
     [participants, getAccountType]
   );
+
+
+  useEffect(() => {
+
+    
+   
+   
+  }, []);
+
+
   const listeners = useMemo(() => {
     const l = participants
       ?.filter((p) => getAccountType(p?.user_name) === LISTENER)
@@ -64,8 +76,10 @@ const InCall = () => {
     );
   }, [participants, getAccountType, local, mods]);
 
-  const canSpeak = useMemo(() => {
-    const s = [...mods, ...speakers];
+
+  const onlyMod = useMemo(() => {
+    const s = [...mods];
+
     return (
       <CanSpeakContainer>
         {s?.map((p, i) => (
@@ -78,12 +92,33 @@ const InCall = () => {
         ))}
       </CanSpeakContainer>
     );
+
   }, [mods, speakers, local]);
 
+  const canSpeak = useMemo(() => {
+    const s = [...speakers];
+
+    console.log('all speakers', s);
+    return (
+      <CanSpeakContainer>
+        {s?.map((p, i) => (
+          <Participant
+            participant={p}
+            key={`speaking-${p.user_id}`}
+            local={local}
+            speakerCount={speakers?.length}
+            speakers={s}
+          />
+        ))}
+      </CanSpeakContainer>
+    );
+  }, [mods, speakers, local]);
+
+  
   const handleAudioChange = useCallback(
-    () => (local?.audio ? handleMute(local) : handleUnmute(local)),
-    [handleMute, handleUnmute, local]
-  );
+    () => (local?.audio ? handleMute(local) : handleUnmute(local)), 
+    
+    [handleMute, handleUnmute, local]);
   const handleHandRaising = useCallback(
     () =>
       local?.user_name.includes("✋") ? lowerHand(local) : raiseHand(local),
@@ -92,13 +127,17 @@ const InCall = () => {
 
   return (
     <>
-    <Container hidden={view !== INCALL}>
+    <Container battleMc={true} hidden={view !== INCALL}>
+      
+   
       <CallHeader>
-        <Header>Speakers</Header>
-        <Counter />
+     
+        {onlyMod}
+       
+        {/* <Counter /> */}
       </CallHeader>
       {canSpeak}
-      <Header>Listeners</Header>
+      <Header>Platéia</Header>
       {listeners}
       <CopyLinkBox room={room} />
       <Tray>
@@ -130,20 +169,26 @@ const InCall = () => {
       </Tray>
     </Container>
     <Audio participants={participants}/>
+
+     
     </>
   );
 };
 
 const Container = styled.div`
-  margin: 48px 0 0;
+  max-width:500px;
+  border:1px solid red;
+  margin: 0 auto;
   visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
   height: ${(props) => (props.hidden ? "0" : "100%")};
+  justify-content: ${(props) => (props.battleMc ? 'space-beteween' : 'initial')};
 `;
 const CanSpeakContainer = styled.div`
   border-bottom: ${theme.colors.grey} 1px solid;
   margin-bottom: 24px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 `;
 const ListeningContainer = styled.div`
   margin-top: 24px;

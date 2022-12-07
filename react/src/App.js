@@ -16,11 +16,7 @@ const AppContent = () => {
     <AppContainer>
       <Wrapper>
         <Header>
-          <HeaderTop>
-            <Title>Party line</Title>
-            <Logo src={logo} className="App-logo" alt="logo" />
-          </HeaderTop>
-          <SmallText>An audio API demo from Daily</SmallText>
+
         </Header>
         {view === PREJOIN && <PreJoinRoom />}
         {view === INCALL && <InCall />}
@@ -31,8 +27,11 @@ const AppContent = () => {
           rel="noopener noreferrer"
         >
           Learn more about this demo
+          
         </Link>
       </Wrapper>
+    
+
     </AppContainer>
   );
 };
@@ -57,6 +56,7 @@ const Wrapper = styled.div`
   padding: 32px 24px 0;
   min-height: 100%;
   margin: 0 auto;
+  padding-top:0px;
 `;
 const Logo = styled.img`
   height: 24px;

@@ -23,6 +23,7 @@ export const AudioItem = ({ participant }) => {
     */
 
   useEffect(() => {
+    
     if (!participant?.audioTrack || !audioRef.current || participant?.local)
       return;
     // sanity check to make sure this is an audio track
@@ -35,6 +36,8 @@ export const AudioItem = ({ participant }) => {
     audioRef.current.srcObject = new MediaStream([
       participant?.tracks.audio.persistentTrack,
     ]);
+  
+    
   }, [participant]);
 
   return (

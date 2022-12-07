@@ -4,9 +4,11 @@ import {
   useState,
   createContext,
   useContext,
+  useRef
 } from "react";
 import Daily from "@daily-co/daily-js";
 import { LISTENER, MOD, SPEAKER } from "./App";
+import Music from "./beats/music-test.mp3";
 
 export const CallContext = createContext(null);
 
@@ -26,6 +28,7 @@ export const CallProvider = ({ children }) => {
   const [roomExp, setRoomExp] = useState(null);
   const [activeSpeakerId, setActiveSpeakerId] = useState(null);
   const [updateParticipants, setUpdateParticipants] = useState(null);
+  const audioRef = useRef(null);
 
   const createRoom = async (roomName) => {
     if (roomName) return roomName;
@@ -91,13 +94,71 @@ export const CallProvider = ({ children }) => {
         newToken = await createToken(name);
       }
 
+      
+      // navigator.mediaDevices.getUserMedia(myConstraints)
+      // .then((stream) => {
+      //   console.log('*******MY STREAM', stream);
+      // })
+      // .catch((err) => {
+      //   console.log('*******ERROR MY STREAM', err);
+      // });
+
+     
+        const stream =  await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+  
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  
+        // let myTracks = stream.getAudioTracks();
+        // let myTrackById = stream.getTrackById(stream.getAudioTracks()[0].id);
+        let microphone = audioContext.createMediaStreamSource(stream);
+    
+        
+        let beat = audioRef.current;
+        beat.crossOrigin = "anonymous";
+        console.log("MEU BEEEEEEEEEEEEEAT", beat);
+        let backgroundMusic = audioContext.createMediaElementSource(beat);
+        let gainNodeBeat = audioContext.createGain();
+        backgroundMusic.connect(gainNodeBeat);
+        gainNodeBeat.gain.setValueAtTime(0.25, audioContext.currentTime);
+        gainNodeBeat.connect(audioContext.destination);
+    
+        let mixedOutput = audioContext.createMediaStreamDestination();
+    
+        microphone.connect(mixedOutput);
+        gainNodeBeat.connect(mixedOutput);
+    
+        let streamBeat = mixedOutput.stream;
+        streamBeat.crossOrigin = "anonymous";
+  
+        
+         // window.audioStream = [];
+        
+  
+       // window.audioStream.push(mixedOutput.stream);
+  
+     
+  
+        let track = streamBeat.getAudioTracks()[0];
+      
+    
+        console.log('***************************************MEU BEAT TRACK', track);
+
+
+
+
+    
       const call = Daily.createCallObject({
-        audioSource: true, // start with audio on to get mic permission from user at start
+        audioSource: track, // start with audio on to get mic permission from user at start
         videoSource: false,
+       
         dailyConfig: {
           experimentalChromeVideoMuteLightOff: true,
         },
       });
+
+    
 
       const options = {
         // CHANGE THIS TO YOUR DAILY DOMAIN
@@ -444,7 +505,7 @@ export const CallProvider = ({ children }) => {
       const exp = room?.config?.exp;
       setRoom(room);
       if (exp) {
-        setRoomExp(exp * 1000 || Date.now() + 1 * 60 * 1000);
+        setRoomExp(exp * 2000 || Date.now() + 1 * 60 * 1000);
       }
     }
     getRoom();
@@ -473,6 +534,10 @@ export const CallProvider = ({ children }) => {
       }}
     >
       {children}
+
+      <audio controls ref={audioRef}>
+        <source src={Music} type="audio/mpeg" />
+      </audio>
     </CallContext.Provider>
   );
 };

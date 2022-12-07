@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import styled from "styled-components";
+import styled, { isStyledComponent } from "styled-components";
 import { useCallState } from "../CallProvider";
 import { LISTENER, MOD, SPEAKER } from "../App";
 import useClickAway from "../useClickAway";
@@ -9,8 +9,13 @@ import MoreIcon from "./MoreIcon";
 import Menu from "./Menu";
 import theme from "../theme";
 
+//import personagem
+import personagem1 from "../avatar/personagem-oculto2.png";
+
 const AVATAR_DIMENSION = 80;
 const ADMIN_BADGE = "⭐ ";
+
+
 
 const initials = (name) =>
   name
@@ -20,7 +25,7 @@ const initials = (name) =>
         .join("")
     : "";
 
-const Participant = ({ participant, local, modCount }) => {
+const Participant = ({ participant, local, modCount, speakerCount, speakers }) => {
   const {
     getAccountType,
     activeSpeakerId,
@@ -35,6 +40,7 @@ const Participant = ({ participant, local, modCount }) => {
     endCall,
   } = useCallState();
   const audioRef = useRef(null);
+ 
   const { ref, isVisible, setIsVisible } = useClickAway(false);
 
   const name = displayName(participant?.user_name);
@@ -106,6 +112,11 @@ const Participant = ({ participant, local, modCount }) => {
               action: () => removeFromCall(participant),
               warning: true,
             },
+            {
+              text: "unMuted",
+              action: () => handleUnmute(participant),
+        
+            }
           ];
           options = [...options, ...o];
         }
@@ -235,44 +246,159 @@ const Participant = ({ participant, local, modCount }) => {
     [getAccountType, local, participant]
   );
 
+
+
+  const DefaultHtmlParticipants = () => {
+   
+    return(
+    
+    <>
+    <Avatar
+      muted={!participant?.audio}
+      isActive={activeSpeakerId === participant?.user_id}
+    >
+      <AvatarText>
+        {participant?.owner ? ADMIN_BADGE : ""}
+        {initials(participant?.user_name)}
+      </AvatarText>
+    </Avatar>
+    <Name>{name}</Name>
+    {getAccountType(participant?.user_name) !== LISTENER && (
+      <AudioIcon>
+        {participant?.audio ? <MicIcon /> : <MutedIcon />}
+      </AudioIcon>
+    )}
+    {showMoreMenu && menuOptions.length > 0 && (
+      <MenuButton onClick={() => setIsVisible(!isVisible)}>
+        <MoreIcon />
+      </MenuButton>
+    )}
+    {isVisible && (
+      <MenuContainer ref={ref}>
+        <Menu options={menuOptions} setIsVisible={setIsVisible} />
+      </MenuContainer>
+    )}
+    {participant?.audioTrack && (
+      <audio
+        autoPlay
+        playsInline
+        id={`audio-${participant.user_id}`}
+        ref={audioRef}
+      />
+    )}
+    </>
+    
+  )}
+
+
+  //Lógica pra saber a posição que cada MC ficará na tela (um de frente pro outro)
+  const logicPositionMcInScreen = (userIdLeftMc, leftMc) => {
+    
+    //Se tiver algum mc on
+    if(speakers.length > 1){
+      if(speakers[0].joined_at < speakers[1].joined_at){
+        userIdLeftMc.current = speakers[0].user_id;
+      }
+      else{
+        userIdLeftMc.current = speakers[1].user_id;
+      }
+    }
+    else{
+      userIdLeftMc.current = speakers[0].user_id;
+    }
+    
+    //Se o participante atual foi o que está no useRef ele é o primeiro
+    if(userIdLeftMc.current === participant.user_id) return true;
+    else return false;
+
+  }//end func
+
+
+  const DefaultHtmlMcs = () => {
+   
+    let userIdLeftMc = useRef(null);
+    let leftMc = true;
+    leftMc = logicPositionMcInScreen(userIdLeftMc, leftMc);
+
+
+    return(
+    
+    <>
+    <AvatarMc
+      leftMc={leftMc}
+      muted={!participant?.audio}
+      isActive={activeSpeakerId === participant?.user_id}
+    >
+      <AvatarText>
+        {participant?.owner ? ADMIN_BADGE : ""}
+        {initials(participant?.user_name)}
+      </AvatarText>
+    </AvatarMc>
+    <Name>{name}</Name>
+    {getAccountType(participant?.user_name) !== LISTENER && (
+      <AudioIcon>
+        {participant?.audio ? <MicIcon /> : <MutedIcon />}
+      </AudioIcon>
+    )}
+    {showMoreMenu && menuOptions.length > 0 && (
+      <MenuButton onClick={() => setIsVisible(!isVisible)}>
+        <MoreIcon />
+      </MenuButton>
+    )}
+    {isVisible && (
+      <MenuContainer ref={ref}>
+        <Menu options={menuOptions} setIsVisible={setIsVisible} />
+      </MenuContainer>
+    )}
+    {participant?.audioTrack && (
+      <audio
+        autoPlay
+        playsInline
+        id={`audio-${participant.user_id}`}
+        ref={audioRef}
+      />
+    )}
+    </>
+    
+  )}
+
+
   return (
-    <Container>
-      <Avatar
-        muted={!participant?.audio}
-        isActive={activeSpeakerId === participant?.user_id}
-      >
-        <AvatarText>
-          {participant?.owner ? ADMIN_BADGE : ""}
-          {initials(participant?.user_name)}
-        </AvatarText>
-      </Avatar>
-      <Name>{name}</Name>
-      {getAccountType(participant?.user_name) !== LISTENER && (
-        <AudioIcon>
-          {participant?.audio ? <MicIcon /> : <MutedIcon />}
-        </AudioIcon>
-      )}
-      {showMoreMenu && menuOptions.length > 0 && (
-        <MenuButton onClick={() => setIsVisible(!isVisible)}>
-          <MoreIcon />
-        </MenuButton>
-      )}
-      {isVisible && (
-        <MenuContainer ref={ref}>
-          <Menu options={menuOptions} setIsVisible={setIsVisible} />
-        </MenuContainer>
-      )}
-      {participant?.audioTrack && (
-        <audio
-          autoPlay
-          playsInline
-          id={`audio-${participant.user_id}`}
-          ref={audioRef}
-        />
-      )}
-    </Container>
+    <>
+     {participant.owner === true ? (
+      <ContainerMod>
+          <DefaultHtmlParticipants />
+      </ContainerMod>
+    ): (
+      <Container>
+          
+          {getAccountType(participant?.user_name) === SPEAKER ? (
+            <>
+             
+              <DefaultHtmlMcs />
+          
+            
+           
+            </>
+           
+          ): (
+            <DefaultHtmlParticipants />
+          )}
+          
+      </Container>
+     
+    )}
+    </>
+   
+    
   );
 };
+
+const ContainerMod = styled.div`
+  position:absolute;
+  top:20px;
+  left:45%;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -280,8 +406,29 @@ const Container = styled.div`
   margin: 8px;
   align-items: flex-start;
   position: relative;
-  max-width: 104px;
+  width: 100%;
+  max-width:fit-content;
 `;
+
+
+const AvatarMc = styled.div`
+width: 152px;
+height: 400px;
+background-image: url(${personagem1});
+right: ${(props) => 
+  props.leftMc ? '0px' : '1px'
+};
+ 
+-moz-transform:  ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
+-o-transform:  ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
+-webkit-transform: ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
+transform:  ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
+
+ 
+
+  
+`;
+
 const Avatar = styled.div`
   width: ${AVATAR_DIMENSION}px;
   height: ${AVATAR_DIMENSION}px;
