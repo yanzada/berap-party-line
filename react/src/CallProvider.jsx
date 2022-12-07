@@ -8,7 +8,7 @@ import {
 } from "react";
 import Daily from "@daily-co/daily-js";
 import { LISTENER, MOD, SPEAKER } from "./App";
-import Music from "./beats/music-test.mp3";
+import Music from "./beats/chama-mlks.mp3";
 
 export const CallContext = createContext(null);
 
