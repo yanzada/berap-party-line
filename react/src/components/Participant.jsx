@@ -11,9 +11,10 @@ import theme from "../theme";
 
 //import personagem
 import personagem1 from "../avatar/personagem-oculto2.png";
+import personagem3d from "../avatar/personagem3d.glb";
 
-const AVATAR_DIMENSION = 80;
-const ADMIN_BADGE = "⭐ ";
+const AVATAR_DIMENSION = 60;
+const ADMIN_BADGE = "";
 
 
 
@@ -25,7 +26,8 @@ const initials = (name) =>
         .join("")
     : "";
 
-const Participant = ({ participant, local, modCount, speakerCount, speakers }) => {
+const Participant = ({ participant, local, modCount, speakers }) => {
+
   const {
     getAccountType,
     activeSpeakerId,
@@ -307,11 +309,24 @@ const Participant = ({ participant, local, modCount, speakerCount, speakers }) =
       userIdLeftMc.current = speakers[0].user_id;
     }
     
+    console.log();
     //Se o participante atual foi o que está no useRef ele é o primeiro
     if(userIdLeftMc.current === participant.user_id) return true;
     else return false;
 
   }//end func
+
+
+
+const FakeMcs = () => {
+  console.log('ENTREI NO FAKE MCS?');
+  return(
+    <>
+      <AvatarMc leftMc={true} muted={false} isActive={false} />
+      <AvatarMc leftMc={false} muted={false} isActive={false} />
+   </>
+
+)}
 
 
   const DefaultHtmlMcs = () => {
@@ -324,16 +339,23 @@ const Participant = ({ participant, local, modCount, speakerCount, speakers }) =
     return(
     
     <>
-    <AvatarMc
+   
+   <model-viewer 
+        camera-controls //deixa mexer
+        style={{width: '200px', height: '400px'}}
+        camera-orbit={leftMc ? '-85deg 80deg 4m' : '100deg 80deg 4m'}
+        touch-action="pan-y" 
+        src={personagem3d} 
+        alt="A 3D model">
+
+    </model-viewer>
+    {/* <AvatarMc
       leftMc={leftMc}
       muted={!participant?.audio}
       isActive={activeSpeakerId === participant?.user_id}
-    >
-      <AvatarText>
-        {participant?.owner ? ADMIN_BADGE : ""}
-        {initials(participant?.user_name)}
-      </AvatarText>
-    </AvatarMc>
+    >  
+    </AvatarMc> */}
+
     <Name>{name}</Name>
     {getAccountType(participant?.user_name) !== LISTENER && (
       <AudioIcon>
@@ -366,18 +388,26 @@ const Participant = ({ participant, local, modCount, speakerCount, speakers }) =
   return (
     <>
      {participant.owner === true ? (
-      <ContainerMod>
+     <>
+     <ContainerMod>
           <DefaultHtmlParticipants />
       </ContainerMod>
+
+    
+    </>
     ): (
       <Container>
+
+          
+         
+           
+          
           
           {getAccountType(participant?.user_name) === SPEAKER ? (
             <>
              
-              <DefaultHtmlMcs />
-          
-            
+             <DefaultHtmlMcs />
+           
            
             </>
            
@@ -396,8 +426,8 @@ const Participant = ({ participant, local, modCount, speakerCount, speakers }) =
 
 const ContainerMod = styled.div`
   position:absolute;
-  top:20px;
-  left:45%;
+  top:5px;
+  left:5px;
 `;
 
 const Container = styled.div`
@@ -413,7 +443,7 @@ const Container = styled.div`
 
 const AvatarMc = styled.div`
 width: 152px;
-height: 400px;
+height: 350px;
 background-image: url(${personagem1});
 right: ${(props) => 
   props.leftMc ? '0px' : '1px'
@@ -423,9 +453,6 @@ right: ${(props) =>
 -o-transform:  ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
 -webkit-transform: ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
 transform:  ${({leftMc}) => leftMc ? 'scaleX(-1)' : ''};
-
- 
-
   
 `;
 

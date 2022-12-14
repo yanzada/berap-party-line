@@ -20,15 +20,7 @@ const AppContent = () => {
         </Header>
         {view === PREJOIN && <PreJoinRoom />}
         {view === INCALL && <InCall />}
-        <Link
-          center={view === INCALL}
-          href="https://docs.daily.co/guides/demos#party-line-a-multiplatform-audio-only-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn more about this demo
-          
-        </Link>
+        
       </Wrapper>
     
 
@@ -45,7 +37,7 @@ function App() {
 }
 
 const AppContainer = styled.div`
-  background-color: ${theme.colors.greyLightest};
+  background-color: #1d1c1c;
   width: 100%;
   height: 100%;
   overflow-y: scroll;

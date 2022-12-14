@@ -1,0 +1,152 @@
+.myBox{
+    display:flex;
+    height:100%;
+
+}
+
+.boxTabPanel{
+    position:relative;
+    height:100%;
+    width: 100%!important;
+}
+
+.boxTabPanelChat{
+    max-width:400px;
+    max-height: 285px;
+    min-height: 260px;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+}
+
+.containerChatMessageTab{
+  width:100%;
+  background-image: url('../images/background-chat2.png');
+  background-repeat:no-repeat;
+  height:90%;
+  overflow-y: scroll;
+}
+
+
+
+.divMessageListLeft, .divMessageListRight{
+    position:relative;
+    width:fit-content;
+    width: 55%;
+}
+
+.divMessageListLeft{
+    float:left;
+    width: 70%;
+}
+
+.divMessageListRight{
+    float:right;
+}
+
+
+.divMessageListLeft img{
+    left:1px;
+}
+
+.divMessageListRight img{
+    right:1px;
+}
+
+.nameSendMessageLeft, .nameSendMessageRight{
+   
+    color: #00000073;
+     font-size: 12px;
+    position:absolute;
+    z-index:99999;
+  }
+
+.nameSendMessageLeft{
+    left:30px;
+    top:10px;
+}
+
+.nameSendMessageRight{
+    left:15px;
+    top:10px;
+}
+
+
+
+.boxSendMessage{
+    border-left: 1px solid #e9edef;
+    background-color:#f0f2f5;
+    height:10%;
+    width:100%;
+}
+
+.inputSendMessage{
+    width: 75%;
+    border: none;
+    height: 25px;
+    margin-top: 5px;
+    margin-left: 10px;
+    padding: 5px;
+    box-shadow: 1px 1px 1px 1px #00000012;
+    border-radius: 5px;
+}
+
+
+
+
+
+
+.MuiTabs-root.MuiTabs-vertical{
+    min-width:100px;
+
+}
+
+.rce-mbox.rce-mbox-right{
+  
+    margin-top: 6px!important;
+    background-color: #d9fdd3;
+ 
+  }
+
+  .rce-mbox-right-notch{
+    fill: #d9fdd3;
+    filter: drop-shadow(2px 0 1px rgba(0,0,0,.2));
+    height: 15px;
+    position: absolute;
+    right: -14px;
+    top: 0;
+    width: 15px;
+  }
+
+
+
+  .rce-container-mbox{
+    min-width: auto;
+    width:fit-content;
+  }
+
+  .rce-mbox{
+   
+    margin-top: 6px!important;
+    padding-top:20px;
+   
+  }
+
+
+  .rce-mbox-text{
+    font-size:12.5px!important;
+    line-height: 16px;
+  }
+
+  .MuiBox-root{
+    padding:0px!important;
+   
+  }
+
+  .MuiTabs-root.MuiTabs-vertical{
+    width: 20%!important;
+  }
+
+  .rce-input-textarea{
+    overflow:hidden!important;
+  }

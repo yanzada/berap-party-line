@@ -2,13 +2,17 @@ import { useMemo, useCallback, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { INCALL, useCallState } from "../CallProvider";
 import { SPEAKER, LISTENER, MOD } from "../App";
-import CopyLinkBox from "./CopyLinkBox";
 import Participant from "./Participant";
 import Audio from "./Audio";
 import Counter from "./Counter";
 import MicIcon from "./MicIcon";
 import MutedIcon from "./MutedIcon";
+import palcoImg from "../images/palco.png";
 import theme from "../theme";
+
+
+import {SocketMessage} from './SocketMessage';
+import ContainerInteraction from './ContainerInteraction';
 
 const InCall = () => {
   const {
@@ -22,6 +26,8 @@ const InCall = () => {
     raiseHand,
     lowerHand,
     endCall,
+    mudarAlgoAssim,
+    messageChat,
   } = useCallState();
 
   const audioRef = useRef(null);
@@ -73,9 +79,13 @@ const InCall = () => {
           />
         ))}
       </ListeningContainer>
+      
     );
+   
   }, [participants, getAccountType, local, mods]);
 
+
+ 
 
   const onlyMod = useMemo(() => {
     const s = [...mods];
@@ -97,22 +107,40 @@ const InCall = () => {
 
   const canSpeak = useMemo(() => {
     const s = [...speakers];
+    const m = [...mods];
+
+    
+    //Orde todos os elementos pelo joined_at
+    s.sort((a,b) => a.joined_at - b.joined_at);
 
     console.log('all speakers', s);
     return (
       <CanSpeakContainer>
-        {s?.map((p, i) => (
-          <Participant
-            participant={p}
-            key={`speaking-${p.user_id}`}
-            local={local}
-            speakerCount={speakers?.length}
-            speakers={s}
-          />
-        ))}
+
+          {s?.map((p, i) => (
+            <Participant
+              participant={p}
+              key={`speaking-${p.user_id}`}
+              local={local}
+             
+              speakers={s}
+            />
+          ))}
+       
       </CanSpeakContainer>
     );
   }, [mods, speakers, local]);
+
+  
+
+  const createInitialSpeak = () => {
+    return (
+      <DivZeroSpeak>
+        <img src={palcoImg} style={{position: 'absolute', bottom: '1px'}} alt="img palco vazio" />
+        <ZeroSpeakText>Nenhum MC no palco</ZeroSpeakText>
+      </DivZeroSpeak>
+    );
+  };
 
   
   const handleAudioChange = useCallback(
@@ -129,18 +157,30 @@ const InCall = () => {
     <>
     <Container battleMc={true} hidden={view !== INCALL}>
       
+      <BoxPlaco>
+        
+          <CallHeader>
+              {onlyMod}
+          </CallHeader>
+
+          {speakers.length === 0 ? (
+            createInitialSpeak()
+          ) : (
+            canSpeak
+          )}
    
-      <CallHeader>
+      </BoxPlaco>
      
-        {onlyMod}
-       
-        {/* <Counter /> */}
-      </CallHeader>
-      {canSpeak}
-      <Header>Platéia</Header>
-      {listeners}
-      <CopyLinkBox room={room} />
-      <Tray>
+        
+        <BoxPlateia>
+            <ContainerInteraction plateia={listeners} 
+                                  room={room}
+                                  />    
+        </BoxPlateia>
+      
+     
+     
+      {/* <Tray>
         <TrayContent>
           {[MOD, SPEAKER].includes(getAccountType(local?.user_name)) ? (
             <AudioButton onClick={handleAudioChange}>
@@ -166,8 +206,12 @@ const InCall = () => {
             <LeaveButton onClick={leaveCall}>Leave call</LeaveButton>
           )}
         </TrayContent>
-      </Tray>
+      </Tray> */}
+
+      
+
     </Container>
+  
     <Audio participants={participants}/>
 
      
@@ -177,19 +221,37 @@ const InCall = () => {
 
 const Container = styled.div`
   max-width:500px;
-  border:1px solid red;
+  background-color: #fff;
   margin: 0 auto;
   visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
   height: ${(props) => (props.hidden ? "0" : "100%")};
+  min-height:500px;
   justify-content: ${(props) => (props.battleMc ? 'space-beteween' : 'initial')};
+  position:relative;
+  height:100vh;
 `;
+
+const BoxPlaco = styled.div`
+  height:55%;
+  overflow:hidden;
+`;
+
+const BoxPlateia = styled.div`
+  height:45%;
+  overflow:hidden;
+`;
+
+/*  container dos MCs */
 const CanSpeakContainer = styled.div`
   border-bottom: ${theme.colors.grey} 1px solid;
   margin-bottom: 24px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
+  height:fit-content;
 `;
+
+/*  container plateia */
 const ListeningContainer = styled.div`
   margin-top: 24px;
   display: flex;
@@ -201,9 +263,10 @@ const Header = styled.h2`
 `;
 const CallHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-top: 24px;
+  margin-top: 0px;
+  height:1px;
 `;
 const Tray = styled.div`
   display: flex;
@@ -249,5 +312,21 @@ const AudioButton = styled(Button)`
 const ButtonText = styled.span`
   margin-left: 4px;
 `;
+
+
+const DivZeroSpeak = styled.div`
+  width:100%;
+  min-height:300px;
+  position:relative;
+  `;
+
+const ZeroSpeakText = styled.p`
+  text-align:center;
+  color: #2189a9;
+  padding-top:200px;
+`;
+
+
+
 
 export default InCall;

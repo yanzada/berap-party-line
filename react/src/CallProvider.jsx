@@ -28,7 +28,18 @@ export const CallProvider = ({ children }) => {
   const [roomExp, setRoomExp] = useState(null);
   const [activeSpeakerId, setActiveSpeakerId] = useState(null);
   const [updateParticipants, setUpdateParticipants] = useState(null);
+  
   const audioRef = useRef(null);
+
+  const [messageChat, setMessageChat] = useState([]);
+
+
+  
+  const NewMessageChat = useCallback((evt) => {
+    return callFrame.sendAppMessage({ msg: evt }, '*');
+
+  });
+
 
   const createRoom = async (roomName) => {
     if (roomName) return roomName;
@@ -131,6 +142,9 @@ export const CallProvider = ({ children }) => {
     
         let streamBeat = mixedOutput.stream;
         streamBeat.crossOrigin = "anonymous";
+        beat.style.display = 'none'; 
+       
+
   
         
          // window.audioStream = [];
@@ -145,7 +159,7 @@ export const CallProvider = ({ children }) => {
     
         console.log('***************************************MEU BEAT TRACK', track);
 
-
+        
 
 
     
@@ -215,12 +229,17 @@ export const CallProvider = ({ children }) => {
         call.off("joined-meeting", handleJoinedMeeting);
       };
     },
+
+   
+
     [callFrame]
   );
 
   const handleParticipantJoinedOrUpdated = useCallback((evt) => {
     setUpdateParticipants(`updated-${evt?.participant?.user_id}-${Date.now()}`);
     console.log("[PARTICIPANT JOINED/UPDATED]", evt.participant);
+
+    
   }, []);
 
   const handleParticipantLeft = useCallback((evt) => {
@@ -255,6 +274,10 @@ export const CallProvider = ({ children }) => {
     return username.slice(-3);
   }, []);
 
+
+
+
+
   const leaveCall = useCallback(() => {
     if (!callFrame) return;
     async function leave() {
@@ -273,6 +296,7 @@ export const CallProvider = ({ children }) => {
        * the call on their end.
        */
       callFrame.sendAppMessage({ msg: FORCE_EJECT }, participant?.session_id);
+      
       setUpdateParticipants(
         `eject-participant-${participant?.user_id}-${Date.now()}`
       );
@@ -401,6 +425,8 @@ export const CallProvider = ({ children }) => {
         { userName, id: participant?.user_id, msg },
         participant?.session_id
       );
+
+      
     },
     [getAccountType, displayName, handleMute, callFrame]
   );
@@ -437,6 +463,8 @@ export const CallProvider = ({ children }) => {
             leaveCall();
             break;
           default:
+            console.log('cai aqui?');
+            setMessageChat(evt.data.msg);
             break;
         }
       } catch (e) {
@@ -525,6 +553,9 @@ export const CallProvider = ({ children }) => {
         removeFromCall,
         raiseHand,
         lowerHand,
+        setMessageChat,
+        messageChat,
+        NewMessageChat,
         activeSpeakerId,
         error,
         participants,
