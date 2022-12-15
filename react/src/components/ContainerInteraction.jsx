@@ -1,107 +1,68 @@
 import * as React from 'react';
-import CopyLinkBox from "./CopyLinkBox";
-import styled, { isStyledComponent } from "styled-components";
-
-
-
-import Box from '@mui/material/Box';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
-import Tab from '@mui/material/Tab';
-
-import 'react-chat-elements/dist/main.css'
-// MessageBox component
-import { MessageList, Input, Button } from 'react-chat-elements'
-
 import {CallContext} from '../CallProvider';
 
+import { MessageList, Input, Button } from 'react-chat-elements'
+import CopyLinkBox from "./CopyLinkBox";
+
+
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+
+import MarkUnreadChatAltIcon from '@mui/icons-material/MarkUnreadChatAlt';
+import GroupsIcon from '@mui/icons-material/Groups';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+
+
+//css
+import 'react-chat-elements/dist/main.css'
 import '../css/ContainerInteraction_module.css';
 
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-   
 
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography component={'span'}>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-
-
-function LinkTab(props) {
-    return (
-      <Tab
-        component="a"
-        onClick={(event) => {
-          event.preventDefault();
-        }}
-        {...props}
-      />
-    );
-  }
-
-  function a11yProps(index) {
-    return {
-      id: `vertical-tab-${index}`,
-      'aria-controls': `vertical-tabpanel-${index}`,
-    };
-  }
-
-
-
-
-  //Main func
+//Main func
 export default function ContainerInteraction({plateia, room}) {
     
-
-    const {setMessageChat, messageChat, NewMessageChat} = React.useContext(CallContext); 
+    const { messageChat, NewMessageChat} = React.useContext(CallContext); 
     
-    
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState(1);
     const messageListReferance = React.createRef();
     const inputReferance = React.createRef();
-   
     const lastMessage = React.useRef();
-    const [allMessageChat, setAllMessageChat] = React.useState( [
-        {
-            message:'Seja bem vindo',
-            mySelf: false,
-        }
-    ]);
-
+    const [allMessageChat, setAllMessageChat] = React.useState([{message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,} ]);
+    const messagesEndRef = React.createRef();
    
     React.useEffect(() => {
 
         if(messageChat[0]){
-
             if(lastMessage.current === messageChat[0].message){
                 return false;
             }
             else{
-                console.log('CHEGOU ESSA NOVA MENSAGEM AQUI PARÇA!!!!!', messageChat[0]);
                 let newMessage = [messageChat[0]];
                 setAllMessageChat(allMessageChat => [...allMessageChat,...newMessage]);
                 lastMessage.current = messageChat[0].message;
-            }
 
-           
-            
+                scrollToBottom();
+                
+            }      
         }   
 
     });
 
+
+    const scrollToBottom = () => {
+        console.log('entri no scroll?');
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+      //  let posicoes = messagesEndRef.current.getBoundingClientRect();
+      //  console.log('posição', posicoes);
+       // $(this).scrollTop(posicoes.top);
+    //    const yOffset = 20000;
+    //     const y = messagesEndRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    //     console.log('meu y', y);
+    //     window.scrollTo({top: y, behavior: 'smooth'});
+       
+      }
 
   const handleSendMessage = () => {
     let valueTextArea = inputReferance.current.value;
@@ -122,96 +83,110 @@ export default function ContainerInteraction({plateia, room}) {
     }];
     NewMessageChat(emitNewMessage);
     
-    
-    console.log(allMessageChat);
-  }
-   
-    
-    const handleChange = (event, newValue) => {
-      
-        setValue(newValue);
-    };
 
+    //clear
+    inputReferance.current.value = '';
+    inputReferance.current.focus();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }//end func
    
+
+    const actions = [
+        { icon: <MarkUnreadChatAltIcon />, name: 'Chat', value: 1 },
+        { icon: <GroupsIcon />, name: 'Plateia', value: 2 },
+        { icon: <InsertLinkIcon />, name: 'Link', value: 3 },
+    ];
+
+    
       
 
   return (
-    <div className="myBox">
-      <Tabs orientation="vertical"
-            variant="scrollable"value={value} 
-            onChange={handleChange} 
-            aria-label="nav tabs example"
-            sx={{ borderRight: 1, borderColor: 'divider' }}
-        >
-            <LinkTab label="Chat" {...a11yProps(0)} />
-            <LinkTab label="Plateia" {...a11yProps(1)} />
-            <LinkTab label="Link" {...a11yProps(2)} />
-    </Tabs>
-
-
-    <div class="boxTabPanel">
-   
-   
-        <TabPanel value={value} index={0}>
-
-
-        <div className="boxTabPanelChat">
-            <div className="containerChatMessageTab">
-
-
-                {
-                allMessageChat.map((el, index) => (
-                    <>
-                    {console.log('EU NÃO ENTRO AQUI? ', index)}
-                    <div className={el.mySelf ? 'divMessageListRight' : 'divMessageListLeft'}>
-                        <MessageList
-                            referance={messageListReferance}
-                            className='MessageListCss'
-                            lockable={true}
-                            toBottomHeight={'100%'}
-                            dataSource={[
-                                {
-                                    position: el.mySelf ? 'right' : 'left',
-                                    type: 'text',
-                                    text: el.message,
-                                },
-                            ]} 
-                        />
-                        <span className={el.mySelf ? 'nameSendMessageRight' : 'nameSendMessageLeft'}>Yanzada</span>
-                
-                    </div>
-                </>
-                ))
-                } 
-
-            </div>
-            
-
-            <div class="boxSendMessage">
-                <Input
-                    referance={inputReferance}
-                    placeholder='Sua mensagem...'
-                    multiline={true}
-                    rightButtons={<Button color='white' onClick={handleSendMessage} backgroundColor='green' text='Enviar' />}
-                />
-            </div>
-        </div>
-   
-        </TabPanel>
 
     
-   
-   
+    <div className="myBox">
 
+       
+
+        {/*CHAT */ }
+        {value === 1 && (
+            <div className="boxTabPanelChat">
+     
+                <div className="containerChatMessageTab">
   
-        <TabPanel value={value} index={1}>
-        {plateia}
-        </TabPanel>
+                  { allMessageChat.map((el, index) => (
+                        <div className={el.mySelf ? 'divMessageListRight' : 'divMessageListLeft'}>
+                          <MessageList
+                              referance={messageListReferance}
+                              className='MessageListCss'
+                              lockable={true}
+                              toBottomHeight={'100%'}
+                              dataSource={[
+                                  {
+                                      position: el.mySelf ? 'right' : 'left',
+                                      type: 'text',
+                                      text: el.message,
+                                  },
+                              ]} 
+                          />
+
+                          {!el.mySelf && <span className="nameSendMessageLeft">Yanzada</span>}
+                        </div>          
+                  ))} 
+                
+               
+                <div className="messageEnd" ref={messagesEndRef} />
+                </div>
   
-        <TabPanel value={value} index={2}>
-            <CopyLinkBox room={room} />
-        </TabPanel>
-    </div>
+  
+                <div class="boxSendMessage">
+                    <Input
+                        referance={inputReferance}
+                        placeholder='Sua mensagem...'
+                        multiline={true}
+                        rightButtons={<Button color='white' onClick={handleSendMessage} backgroundColor='green' text='Enviar' />}
+                    />
+                </div>
+            </div>
+        )}
+
+
+
+        {/* PLATEIA */ }
+        {value === 2 && (
+              <div className="boxTabPanelChat">
+                   {plateia}
+             </div>
+        )}
+
+        
+        {/* LINK */ }
+        {value === 3 && (
+              <div className="boxTabPanelChat">
+                   <CopyLinkBox room={room} />
+             </div>
+        )}
+      
+
+
+    {/* MENU FLUTUANTE */ }      
+    <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 2, left: 5 }}
+        icon={<SpeedDialIcon />}
+        
+    >
+        {actions.map((action) => (
+        <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            value={action.value}
+            tooltipTitle={action.name}
+            onClick={() => setValue(action.value)}
+            
+        />
+        ))}
+    </SpeedDial>
+   
 
   </div>
   );
