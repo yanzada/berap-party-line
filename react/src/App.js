@@ -45,7 +45,7 @@ const AppContainer = styled.div`
 `;
 const Wrapper = styled.div`
   max-width: 700px;
-  padding: 32px 24px 0;
+  
   min-height: 100%;
   margin: 0 auto;
   padding-top:0px;

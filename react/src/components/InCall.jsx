@@ -135,10 +135,9 @@ const InCall = () => {
 
   const createInitialSpeak = () => {
     return (
-      <DivZeroSpeak>
-        <img src={palcoImg} style={{position: 'absolute', bottom: '1px'}} alt="img palco vazio" />
+      
         <ZeroSpeakText>Nenhum MC no palco</ZeroSpeakText>
-      </DivZeroSpeak>
+      
     );
   };
 
@@ -237,7 +236,7 @@ const BoxPlaco = styled.div`
 `;
 
 const BoxPlateia = styled.div`
-  height:45%;
+  height:44%;
   overflow:hidden;
 `;
 

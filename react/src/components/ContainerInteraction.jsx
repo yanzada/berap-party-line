@@ -29,8 +29,9 @@ export default function ContainerInteraction({plateia, room}) {
     const messageListReferance = React.createRef();
     const inputReferance = React.createRef();
     const lastMessage = React.useRef();
-    const [allMessageChat, setAllMessageChat] = React.useState([{message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,} ]);
+    const [allMessageChat, setAllMessageChat] = React.useState([{message:'Seja bem vindo',mySelf: true,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,}, {message:'Seja bem vindo',mySelf: false,} ]);
     const messagesEndRef = React.createRef();
+    const containerChatMessageTab = React.createRef();
    
     React.useEffect(() => {
 
@@ -53,9 +54,20 @@ export default function ContainerInteraction({plateia, room}) {
 
     const scrollToBottom = () => {
         console.log('entri no scroll?');
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-      //  let posicoes = messagesEndRef.current.getBoundingClientRect();
-      //  console.log('posição', posicoes);
+       
+       
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
+       
+        let posicoes = messagesEndRef.current.getBoundingClientRect();
+       
+
+        console.log('end message', posicoes);
+
+        let ultimo = allMessageChat.at(-1);
+        console.log(ultimo);
+      
+        
+        //  console.log('posição', posicoes);
        // $(this).scrollTop(posicoes.top);
     //    const yOffset = 20000;
     //     const y = messagesEndRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
@@ -87,7 +99,13 @@ export default function ContainerInteraction({plateia, room}) {
     //clear
     inputReferance.current.value = '';
     inputReferance.current.focus();
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    
+   
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
+ 
+          
+  
+    
   }//end func
    
 
@@ -109,16 +127,16 @@ export default function ContainerInteraction({plateia, room}) {
 
         {/*CHAT */ }
         {value === 1 && (
-            <div className="boxTabPanelChat">
+            <div className="boxTabPanel">
      
-                <div className="containerChatMessageTab">
+                <div className="containerChatMessageTab" ref={containerChatMessageTab}>
   
                   { allMessageChat.map((el, index) => (
                         <div className={el.mySelf ? 'divMessageListRight' : 'divMessageListLeft'}>
                           <MessageList
                               referance={messageListReferance}
                               className='MessageListCss'
-                              lockable={true}
+                              lockable={false}
                               toBottomHeight={'100%'}
                               dataSource={[
                                   {
@@ -153,7 +171,7 @@ export default function ContainerInteraction({plateia, room}) {
 
         {/* PLATEIA */ }
         {value === 2 && (
-              <div className="boxTabPanelChat">
+              <div className="boxTabPanel">
                    {plateia}
              </div>
         )}
@@ -161,7 +179,7 @@ export default function ContainerInteraction({plateia, room}) {
         
         {/* LINK */ }
         {value === 3 && (
-              <div className="boxTabPanelChat">
+              <div className="boxTabPanel">
                    <CopyLinkBox room={room} />
              </div>
         )}

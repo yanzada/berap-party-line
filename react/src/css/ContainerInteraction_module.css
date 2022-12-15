@@ -4,15 +4,10 @@
 
 }
 
-.boxTabPanel{
-    position:relative;
-    height:100%;
-    width: 100%!important;
-}
 
-.boxTabPanelChat{
+.boxTabPanel{
     max-height: 285px;
-    min-height: 260px;
+    min-height: 250px;
     height:100%;
     display:flex;
     flex-direction: column;
@@ -23,7 +18,7 @@
   width:100%;
   background-image: url('../images/background-chat2.png');
   background-repeat:no-repeat;
-  height:100%;
+  height:85%;
   overflow-y: scroll;
  
 }
@@ -77,7 +72,7 @@
 .boxSendMessage{
     border-left: 1px solid #e9edef;
     background-color:#f0f2f5;
-    height:10%;
+    height:14%;
     width:100%;
 }
 
