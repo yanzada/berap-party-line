@@ -189,7 +189,7 @@ export default function ContainerInteraction({plateia, room}) {
     {/* MENU FLUTUANTE */ }      
     <SpeedDial
         ariaLabel="SpeedDial basic example"
-        sx={{ position: 'absolute', bottom: 2, left: 5 }}
+        sx={{ position: 'absolute', bottom: 50, left: 5 }}
         icon={<SpeedDialIcon />}
         
     >
