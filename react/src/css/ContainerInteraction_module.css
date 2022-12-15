@@ -1,14 +1,10 @@
 .myBox{
     display:flex;
-    height:100%;
-
 }
 
 
 .boxTabPanel{
-    max-height: 285px;
-    min-height: 250px;
-    height:100%;
+    
     display:flex;
     flex-direction: column;
     width:100%;
@@ -18,7 +14,7 @@
   width:100%;
   background-image: url('../images/background-chat2.png');
   background-repeat:no-repeat;
-  height:85%;
+  height:85vh;
   overflow-y: scroll;
  
 }
@@ -72,7 +68,7 @@
 .boxSendMessage{
     border-left: 1px solid #e9edef;
     background-color:#f0f2f5;
-    height:14%;
+    height:15vh;
     width:100%;
 }
 
@@ -121,10 +117,12 @@
   }
 
   .rce-mbox{
-   
     margin-top: 6px!important;
     padding-top:20px;
-   
+  }
+
+  .rce-container-input{
+    height:100%!important;
   }
 
 

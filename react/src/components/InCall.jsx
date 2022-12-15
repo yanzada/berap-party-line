@@ -227,16 +227,17 @@ const Container = styled.div`
   min-height:500px;
   justify-content: ${(props) => (props.battleMc ? 'space-beteween' : 'initial')};
   position:relative;
-  height:100vh;
+  max-height:100vh;
+  height:vh;
 `;
 
 const BoxPlaco = styled.div`
-  height:55%;
+  height:55vh;
   overflow:hidden;
 `;
 
 const BoxPlateia = styled.div`
-  height:44%;
+  height:45vh;
   overflow:hidden;
 `;
 
