@@ -14,9 +14,16 @@
   width:100%;
   background-image: url('../images/background-chat2.png');
   background-repeat:no-repeat;
-  height:85vh;
+  height:38vh;
   overflow-y: scroll;
  
+}
+
+.boxSendMessage{
+    border-left: 1px solid #e9edef;
+    background-color:#f0f2f5;
+    height:7vh;
+    width:100%;
 }
 
 
@@ -65,12 +72,7 @@
 
 
 
-.boxSendMessage{
-    border-left: 1px solid #e9edef;
-    background-color:#f0f2f5;
-    height:15vh;
-    width:100%;
-}
+
 
 .inputSendMessage{
     width: 75%;

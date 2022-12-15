@@ -123,8 +123,6 @@ export default function ContainerInteraction({plateia, room}) {
     
     <div className="myBox">
 
-       
-
         {/*CHAT */ }
         {value === 1 && (
             <div className="boxTabPanel">
@@ -168,9 +166,8 @@ export default function ContainerInteraction({plateia, room}) {
         )}
 
 
-
-        {/* PLATEIA */ }
-        {value === 2 && (
+          {/* PLATEIA */ }
+          {value === 2 && (
               <div className="boxTabPanel">
                    {plateia}
              </div>
@@ -185,8 +182,7 @@ export default function ContainerInteraction({plateia, room}) {
         )}
       
 
-
-    {/* MENU FLUTUANTE */ }      
+      {/* MENU FLUTUANTE */ }      
     <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 5, left: 5 }}
@@ -204,6 +200,8 @@ export default function ContainerInteraction({plateia, room}) {
         />
         ))}
     </SpeedDial>
+
+      
    
 
   </div>
