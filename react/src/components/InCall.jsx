@@ -158,9 +158,9 @@ const InCall = () => {
       
       <BoxPlaco>
         
-          <CallHeader>
-              {onlyMod}
-          </CallHeader>
+           <CallHeader>
+             {onlyMod}
+          </CallHeader> 
 
           {speakers.length === 0 ? (
             createInitialSpeak()
@@ -174,6 +174,7 @@ const InCall = () => {
         <BoxPlateia>
             <ContainerInteraction plateia={listeners} 
                                   room={room}
+                                  mod={onlyMod}
                                   />    
         </BoxPlateia>
       
@@ -234,7 +235,9 @@ const Container = styled.div`
 const BoxPlaco = styled.div`
   height:55vh;
   overflow:hidden;
-`;
+  background-image: url('https://i.pinimg.com/originals/4a/96/e6/4a96e602750b8ef669a77565becf3939.gif');
+  background-size: cover;
+  `;
 
 const BoxPlateia = styled.div`
   height:45vh;

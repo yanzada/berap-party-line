@@ -264,7 +264,10 @@ const Participant = ({ participant, local, modCount, speakers }) => {
         {initials(participant?.user_name)}
       </AvatarText>
     </Avatar>
-    <Name>{name}</Name>
+    {getAccountType(local?.user_name) !== MOD &&(
+      <Name>{name}</Name>
+    )}
+    
     {getAccountType(participant?.user_name) !== LISTENER && (
       <AudioIcon>
         {participant?.audio ? <MicIcon /> : <MutedIcon />}
@@ -342,7 +345,7 @@ const FakeMcs = () => {
    
    <model-viewer 
         camera-controls //deixa mexer
-        style={{width: '200px', height: '400px'}}
+        style={{width: '180px', height: '380px'}}
         camera-orbit={leftMc ? '-85deg 80deg 4m' : '100deg 80deg 4m'}
         touch-action="pan-y" 
         src={personagem3d} 
@@ -358,7 +361,7 @@ const FakeMcs = () => {
 
     <Name>{name}</Name>
     {getAccountType(participant?.user_name) !== LISTENER && (
-      <AudioIcon>
+      <AudioIcon leftMc={leftMc}>
         {participant?.audio ? <MicIcon /> : <MutedIcon />}
       </AudioIcon>
     )}
@@ -398,10 +401,7 @@ const FakeMcs = () => {
     ): (
       <Container>
 
-          
-         
-           
-          
+
           
           {getAccountType(participant?.user_name) === SPEAKER ? (
             <>
@@ -426,14 +426,16 @@ const FakeMcs = () => {
 
 const ContainerMod = styled.div`
   position:absolute;
-  top:5px;
-  left:5px;
+  top:49vh;
+  right:20px;
+  z-index:9999;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 8px;
+  margin-top:2px;
   align-items: flex-start;
   position: relative;
   width: 100%;
@@ -488,8 +490,11 @@ const Name = styled.p`
 `;
 const AudioIcon = styled.div`
   position: absolute;
-  top: ${AVATAR_DIMENSION - 28}px;
-  left: -4px;
+  top: 52px;
+  right: ${(props) =>
+    props.leftMc ? '25px' : 'unset'};
+  left: ${(props) =>
+      props.leftMc ? 'unset' : '25px'};
 `;
 const MenuButton = styled.button`
   border: none;

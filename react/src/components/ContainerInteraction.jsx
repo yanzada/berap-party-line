@@ -21,7 +21,7 @@ import '../css/ContainerInteraction_module.css';
 
 
 //Main func
-export default function ContainerInteraction({plateia, room}) {
+export default function ContainerInteraction({plateia, room, mod}) {
     
     const { messageChat, NewMessageChat} = React.useContext(CallContext); 
     
@@ -120,8 +120,12 @@ export default function ContainerInteraction({plateia, room}) {
 
   return (
 
+   
     
     <div className="myBox">
+
+       
+        
 
         {/*CHAT */ }
         {value === 1 && (
@@ -205,6 +209,9 @@ export default function ContainerInteraction({plateia, room}) {
    
 
   </div>
+ 
   );
+
+  
 }
 
