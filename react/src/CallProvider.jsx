@@ -8,7 +8,7 @@ import {
 } from "react";
 import Daily from "@daily-co/daily-js";
 import { LISTENER, MOD, SPEAKER } from "./App";
-import Music from "./beats/chama-mlks.mp3";
+
 
 export const CallContext = createContext(null);
 
@@ -34,7 +34,7 @@ export const CallProvider = ({ children }) => {
 
   
   
-  const audioRef = useRef(null);
+  
 
   const [messageChat, setMessageChat] = useState([]);
   const [newWow, setNewWow] = useState();
@@ -47,7 +47,7 @@ export const CallProvider = ({ children }) => {
 
   });
 
-  const UpdateMicUser = useCallback((evt, sessionId) => {
+  const UpdateMicUser = useCallback((evt, sessionId, beat) => {
 
     const test = async () => {
       const stream =  await navigator.mediaDevices.getUserMedia({
@@ -60,7 +60,7 @@ export const CallProvider = ({ children }) => {
       let microphone = audioContext.createMediaStreamSource(stream);
   
       
-      let beat = audioRef.current;
+     
       beat.crossOrigin = "anonymous";
       console.log("MEU BEEEEEEEEEEEEEAT", beat);
       let backgroundMusic = audioContext.createMediaElementSource(beat);
@@ -76,7 +76,7 @@ export const CallProvider = ({ children }) => {
   
       let streamBeat = mixedOutput.stream;
       streamBeat.crossOrigin = "anonymous";
-      beat.style.display = 'none'; 
+      //beat.style.display = 'none'; 
      
 
       let track = streamBeat.getAudioTracks()[0];
@@ -639,9 +639,7 @@ export const CallProvider = ({ children }) => {
     >
       {children}
 
-      <audio controls ref={audioRef}>
-        <source src={Music} type="audio/mpeg" />
-      </audio>
+      
     </CallContext.Provider>
   );
 };
