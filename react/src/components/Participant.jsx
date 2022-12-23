@@ -343,7 +343,7 @@ const FakeMcs = () => {
     
     <>
    
-   <model-viewer 
+   {/* <model-viewer 
         camera-controls //deixa mexer
         style={{width: '180px', height: '380px'}}
         camera-orbit={leftMc ? '-85deg 80deg 4m' : '100deg 80deg 4m'}
@@ -351,7 +351,7 @@ const FakeMcs = () => {
         src={personagem3d} 
         alt="A 3D model">
 
-    </model-viewer>
+    </model-viewer> */}
     {/* <AvatarMc
       leftMc={leftMc}
       muted={!participant?.audio}

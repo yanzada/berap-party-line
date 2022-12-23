@@ -5,14 +5,15 @@ import { SPEAKER, LISTENER, MOD } from "../App";
 import Participant from "./Participant";
 import Audio from "./Audio";
 import Counter from "./Counter";
-import MicIcon from "./MicIcon";
-import MutedIcon from "./MutedIcon";
-import palcoImg from "../images/palco.png";
 import theme from "../theme";
+
+
+
 
 
 import {SocketMessage} from './SocketMessage';
 import ContainerInteraction from './ContainerInteraction';
+import {SendWow} from './SendWow';
 
 const InCall = () => {
   const {
@@ -28,6 +29,7 @@ const InCall = () => {
     endCall,
     mudarAlgoAssim,
     messageChat,
+    UpdateMicUser,
   } = useCallState();
 
   const audioRef = useRef(null);
@@ -52,9 +54,10 @@ const InCall = () => {
   );
 
 
-  useEffect(() => {
+ 
 
-    
+
+  useEffect(() => {
    
    
   }, []);
@@ -152,12 +155,29 @@ const InCall = () => {
     [lowerHand, raiseHand, local]
   );
 
+
+  const handleTesteUnmuted = () => {
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$entrei no handle');
+
+    const l = participants?.filter((p) => getAccountType(p?.user_name) === LISTENER)
+
+    console.log('meu L', l[0]['session_id']);
+    let sessionId = l[0]['session_id'];
+
+    UpdateMicUser('new-audio-track', sessionId);
+  };
+
   return (
     <>
-    <Container battleMc={true} hidden={view !== INCALL}>
+    <Container id="containerBattle" battleMc={true} hidden={view !== INCALL}>
       
       <BoxPlaco>
         
+
+          {/* <SendWow /> */}
+          <button onClick={handleTesteUnmuted}>CLICA AQUI RAPIDINHO</button>
+     
+
            <CallHeader>
              {onlyMod}
           </CallHeader> 
@@ -169,7 +189,8 @@ const InCall = () => {
           )}
    
       </BoxPlaco>
-     
+
+      
         
         <BoxPlateia>
             <ContainerInteraction plateia={listeners} 
@@ -235,8 +256,7 @@ const Container = styled.div`
 const BoxPlaco = styled.div`
   height:55vh;
   overflow:hidden;
-  background-image: url('https://i.pinimg.com/originals/4a/96/e6/4a96e602750b8ef669a77565becf3939.gif');
-  background-size: cover;
+  background-color: #F7F7F7;
   `;
 
 const BoxPlateia = styled.div`
@@ -245,6 +265,8 @@ const BoxPlateia = styled.div`
 `;
 
 /*  container dos MCs */
+
+
 const CanSpeakContainer = styled.div`
   border-bottom: ${theme.colors.grey} 1px solid;
   margin-bottom: 24px;

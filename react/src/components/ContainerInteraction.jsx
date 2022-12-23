@@ -23,7 +23,7 @@ import '../css/ContainerInteraction_module.css';
 //Main func
 export default function ContainerInteraction({plateia, room, mod}) {
     
-    const { messageChat, NewMessageChat} = React.useContext(CallContext); 
+    const { messageChat, NewMessageChat, newWow} = React.useContext(CallContext); 
     
     const [value, setValue] = React.useState(1);
     const messageListReferance = React.createRef();
@@ -47,9 +47,14 @@ export default function ContainerInteraction({plateia, room, mod}) {
                 scrollToBottom();
                 
             }      
-        }   
+        }
+        
+      
 
     });
+
+
+   
 
 
     const scrollToBottom = () => {
@@ -58,10 +63,10 @@ export default function ContainerInteraction({plateia, room, mod}) {
        
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); 
        
-        let posicoes = messagesEndRef.current.getBoundingClientRect();
+       // let posicoes = messagesEndRef.current.getBoundingClientRect();
        
 
-        console.log('end message', posicoes);
+       // console.log('end message', posicoes);
 
         let ultimo = allMessageChat.at(-1);
         console.log(ultimo);

@@ -75,7 +75,6 @@ const Link = styled.a`
   display: flex;
   justify-content: center;
   max-width: 400px;
-
   @media only screen and (min-width: 768px) {
     justify-content: ${(props) => (props.center ? "center" : "flex-start")};
     max-width: ${(props) => (props.center ? "100%" : "400px")};

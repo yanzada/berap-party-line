@@ -18,6 +18,9 @@ const MSG_MAKE_MODERATOR = "make-moderator";
 const MSG_MAKE_SPEAKER = "make-speaker";
 const MSG_MAKE_LISTENER = "make-listener";
 const FORCE_EJECT = "force-eject";
+const MSG_WOW = "wow";
+const MSG_NEW_AUDIO_TRACK = 'new-audio-track';
+
 
 export const CallProvider = ({ children }) => {
   const [view, setView] = useState(PREJOIN); // pre-join | in-call
@@ -28,16 +31,88 @@ export const CallProvider = ({ children }) => {
   const [roomExp, setRoomExp] = useState(null);
   const [activeSpeakerId, setActiveSpeakerId] = useState(null);
   const [updateParticipants, setUpdateParticipants] = useState(null);
+
+  
   
   const audioRef = useRef(null);
 
   const [messageChat, setMessageChat] = useState([]);
-
+  const [newWow, setNewWow] = useState();
 
   
   const NewMessageChat = useCallback((evt) => {
     return callFrame.sendAppMessage({ msg: evt }, '*');
 
+   
+
+  });
+
+  const UpdateMicUser = useCallback((evt, sessionId) => {
+
+    const test = async () => {
+      const stream =  await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
+      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+     
+      let microphone = audioContext.createMediaStreamSource(stream);
+  
+      
+      let beat = audioRef.current;
+      beat.crossOrigin = "anonymous";
+      console.log("MEU BEEEEEEEEEEEEEAT", beat);
+      let backgroundMusic = audioContext.createMediaElementSource(beat);
+      let gainNodeBeat = audioContext.createGain();
+      backgroundMusic.connect(gainNodeBeat);
+      gainNodeBeat.gain.setValueAtTime(0.25, audioContext.currentTime);
+      gainNodeBeat.connect(audioContext.destination);
+  
+      let mixedOutput = audioContext.createMediaStreamDestination();
+  
+      microphone.connect(mixedOutput);
+      gainNodeBeat.connect(mixedOutput);
+  
+      let streamBeat = mixedOutput.stream;
+      streamBeat.crossOrigin = "anonymous";
+      beat.style.display = 'none'; 
+     
+
+      let track = streamBeat.getAudioTracks()[0];
+
+
+  
+      callFrame.setInputDevicesAsync({
+        videoSource: null,
+        audioSource: track,
+      });
+    }
+    
+    test();
+     callFrame.sendAppMessage({ msg: evt, session: sessionId }, '*');
+
+    updateAudioTrackForAll(sessionId);
+    
+  });
+
+  const updateAudioTrackForAll = useCallback((sessionId) => {
+    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$ entrei no UpdateMicUser');
+
+    const teste = async () => {
+      const stream =  await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
+      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      audioContext.createMediaStreamSource(stream);
+    }
+   
+    teste();
+
+    return callFrame.updateParticipant(sessionId, {
+      setSubscribedTracks: { audio: true, video: true, screenVideo: false },
+    });
   });
 
 
@@ -115,58 +190,44 @@ export const CallProvider = ({ children }) => {
       // });
 
      
-        const stream =  await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
+        // const stream =  await navigator.mediaDevices.getUserMedia({
+        //   audio: true,
+        // });
   
-        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // let audioContext = new (window.AudioContext || window.webkitAudioContext)();
   
-        // let myTracks = stream.getAudioTracks();
-        // let myTrackById = stream.getTrackById(stream.getAudioTracks()[0].id);
-        let microphone = audioContext.createMediaStreamSource(stream);
-    
-        
-        let beat = audioRef.current;
-        beat.crossOrigin = "anonymous";
-        console.log("MEU BEEEEEEEEEEEEEAT", beat);
-        let backgroundMusic = audioContext.createMediaElementSource(beat);
-        let gainNodeBeat = audioContext.createGain();
-        backgroundMusic.connect(gainNodeBeat);
-        gainNodeBeat.gain.setValueAtTime(0.25, audioContext.currentTime);
-        gainNodeBeat.connect(audioContext.destination);
-    
-        let mixedOutput = audioContext.createMediaStreamDestination();
-    
-        microphone.connect(mixedOutput);
-        gainNodeBeat.connect(mixedOutput);
-    
-        let streamBeat = mixedOutput.stream;
-        streamBeat.crossOrigin = "anonymous";
-        beat.style.display = 'none'; 
        
-
-  
+        // let microphone = audioContext.createMediaStreamSource(stream);
+    
         
-         // window.audioStream = [];
-        
+        // let beat = audioRef.current;
+        // beat.crossOrigin = "anonymous";
+        // console.log("MEU BEEEEEEEEEEEEEAT", beat);
+        // let backgroundMusic = audioContext.createMediaElementSource(beat);
+        // let gainNodeBeat = audioContext.createGain();
+        // backgroundMusic.connect(gainNodeBeat);
+        // gainNodeBeat.gain.setValueAtTime(0.25, audioContext.currentTime);
+        // gainNodeBeat.connect(audioContext.destination);
+    
+        // let mixedOutput = audioContext.createMediaStreamDestination();
+    
+        // microphone.connect(mixedOutput);
+        // gainNodeBeat.connect(mixedOutput);
+    
+        // let streamBeat = mixedOutput.stream;
+        // streamBeat.crossOrigin = "anonymous";
+        // beat.style.display = 'none'; 
+       
   
-       // window.audioStream.push(mixedOutput.stream);
-  
-     
-  
-        let track = streamBeat.getAudioTracks()[0];
+        // let track = streamBeat.getAudioTracks()[0];
       
     
-        console.log('***************************************MEU BEAT TRACK', track);
-
-        
-
 
     
       const call = Daily.createCallObject({
-        audioSource: track, // start with audio on to get mic permission from user at start
+        audioSource: false, // start with audio on to get mic permission from user at start
         videoSource: false,
-       
+        subscribeToTracksAutomatically: false,
         dailyConfig: {
           experimentalChromeVideoMuteLightOff: true,
         },
@@ -462,6 +523,15 @@ export const CallProvider = ({ children }) => {
             //seeya
             leaveCall();
             break;
+            case MSG_WOW:
+              console.log('cai no WOW?');
+              let wow = 'wow'+ Math.random();
+              setNewWow(wow);
+            break;  
+            case MSG_NEW_AUDIO_TRACK:
+              console.log('cai no NEW AUDIO TRACK?');
+              updateAudioTrackForAll(evt.data.session);
+            break;  
           default:
             console.log('cai aqui?');
             setMessageChat(evt.data.msg);
@@ -554,6 +624,8 @@ export const CallProvider = ({ children }) => {
         raiseHand,
         lowerHand,
         setMessageChat,
+        setNewWow,
+        UpdateMicUser,
         messageChat,
         NewMessageChat,
         activeSpeakerId,
@@ -562,6 +634,7 @@ export const CallProvider = ({ children }) => {
         room,
         roomExp,
         view,
+        newWow,
       }}
     >
       {children}
