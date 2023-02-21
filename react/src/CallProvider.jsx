@@ -8,7 +8,8 @@ import {
 } from "react";
 import Daily from "@daily-co/daily-js";
 import { LISTENER, MOD, SPEAKER } from "./App";
-
+import MixedAudios from './util/MixedMicBeat';
+import Music from './beats/chama-mlks.mp3';
 
 export const CallContext = createContext(null);
 
@@ -32,7 +33,7 @@ export const CallProvider = ({ children }) => {
   const [activeSpeakerId, setActiveSpeakerId] = useState(null);
   const [updateParticipants, setUpdateParticipants] = useState(null);
 
-  
+  const myBeat = useRef(null);
   
   
 
@@ -47,50 +48,21 @@ export const CallProvider = ({ children }) => {
 
   });
 
-  const UpdateMicUser = useCallback((evt, sessionId, beat) => {
+  const UpdateMicUser = useCallback(async (evt, sessionId) => {
 
-    const test = async () => {
-      const stream =  await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-     
-      let microphone = audioContext.createMediaStreamSource(stream);
-  
+    myBeat.current = new Audio(Music); 
+    let track = await MixedAudios({myBeat});
+    myBeat.current.play();
       
-     
-      beat.crossOrigin = "anonymous";
-      console.log("MEU BEEEEEEEEEEEEEAT", beat);
-      let backgroundMusic = audioContext.createMediaElementSource(beat);
-      let gainNodeBeat = audioContext.createGain();
-      backgroundMusic.connect(gainNodeBeat);
-      gainNodeBeat.gain.setValueAtTime(0.25, audioContext.currentTime);
-      gainNodeBeat.connect(audioContext.destination);
-  
-      let mixedOutput = audioContext.createMediaStreamDestination();
-  
-      microphone.connect(mixedOutput);
-      gainNodeBeat.connect(mixedOutput);
-  
-      let streamBeat = mixedOutput.stream;
-      streamBeat.crossOrigin = "anonymous";
-      //beat.style.display = 'none'; 
-     
+    console.log('MY TRAAAAAACK', track);
 
-      let track = streamBeat.getAudioTracks()[0];
-
-
-  
+      //add new track
       callFrame.setInputDevicesAsync({
         videoSource: null,
         audioSource: track,
       });
-    }
-    
-    test();
-     callFrame.sendAppMessage({ msg: evt, session: sessionId }, '*');
+
+     callFrame.sendAppMessage({ msg: evt, session: sessionId }, sessionId);
 
     updateAudioTrackForAll(sessionId);
     
@@ -99,19 +71,8 @@ export const CallProvider = ({ children }) => {
   const updateAudioTrackForAll = useCallback((sessionId) => {
     console.log('$$$$$$$$$$$$$$$$$$$$$$$$$ entrei no UpdateMicUser');
 
-    const teste = async () => {
-      const stream =  await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      audioContext.createMediaStreamSource(stream);
-    }
-   
-    teste();
-
     return callFrame.updateParticipant(sessionId, {
-      setSubscribedTracks: { audio: true, video: true, screenVideo: false },
+      setSubscribedTracks: { audio: true, video: false, screenVideo: false },
     });
   });
 
@@ -130,6 +91,8 @@ export const CallProvider = ({ children }) => {
     ).catch((err) => {
       throw new Error(err);
     });
+
+    console.log('minha url', response);
     const room = await response.json();
     return room;
   };

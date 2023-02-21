@@ -6,7 +6,7 @@ import Participant from "./Participant";
 import Audio from "./Audio";
 import Counter from "./Counter";
 import theme from "../theme";
-import Music from '../beats/chama-mlks.mp3'
+
 
 
 
@@ -32,7 +32,7 @@ const InCall = () => {
     UpdateMicUser,
   } = useCallState();
 
-  const audioRef = useRef(null);
+
   
  
 
@@ -164,8 +164,8 @@ const InCall = () => {
 
     console.log('meu L', l[0]['session_id']);
     let sessionId = l[0]['session_id'];
-    let beat = audioRef.current;
-    UpdateMicUser('new-audio-track', sessionId, beat);
+    
+    UpdateMicUser('new-audio-track', sessionId);
   };
 
   return (
@@ -178,9 +178,7 @@ const InCall = () => {
           {/* <SendWow /> */}
           <button onClick={handleTesteUnmuted}>CLICA AQUI RAPIDINHO</button>
 
-            <audio controls ref={audioRef}>
-            <source src={Music} type="audio/mpeg" />
-          </audio>
+            <div id="myBeat"></div>
 
            <CallHeader>
              {onlyMod}
