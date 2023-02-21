@@ -91,8 +91,6 @@ export const CallProvider = ({ children }) => {
     ).catch((err) => {
       throw new Error(err);
     });
-
-    console.log('minha url', response);
     const room = await response.json();
     return room;
   };
@@ -103,8 +101,9 @@ export const CallProvider = ({ children }) => {
     const response = await fetch(
       // CHANGE THIS TO YOUR NETLIFY URL
       // EX: https://myapp.netlify.app/.netlify/functions/token
-      
-        "https://berap.netlify.app/.netlify/functions/token",
+      `${
+        process.env.REACT_APP_NETLIFY_URL || "https://partyline.daily.co"
+      }/.netlify/functions/token`,
       {
         method: "POST",
         body: JSON.stringify({ properties: { room_name: roomName } }),
